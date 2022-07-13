@@ -1,6 +1,7 @@
 package com.ciandt.feedfront.employee;
 
 import com.ciandt.feedfront.excecoes.ArquivoException;
+import com.ciandt.feedfront.excecoes.ComprimentoInvalidoException;
 import com.ciandt.feedfront.excecoes.EmailInvalidoException;
 import com.ciandt.feedfront.excecoes.EmployeeNaoEncontradoException;
 
@@ -13,11 +14,19 @@ public class Employee {
     private String sobrenome;
     private String email;
 
+    private static List<Employee> employeeList = new ArrayList<>();
+
     private static String arquivoCriado = "src/main/resources/arquivo.extensao";
 
-    public Employee(String nome, String sobrenome, String email) {
+    public Employee(String nome, String sobrenome, String email) throws ComprimentoInvalidoException {
         this.id = UUID.randomUUID().toString();
+        if (nome.length() <= 2) {
+            throw new ComprimentoInvalidoException("Comprimento do nome precisa ser maior que 2");
+        }
         this.nome = nome;
+        if (sobrenome.length() <= 2) {
+            throw new ComprimentoInvalidoException("Comprimento do sobrenome precisa ser maior que 2");
+        }
         this.sobrenome = sobrenome;
         this.email = email;
     }
@@ -28,24 +37,10 @@ public class Employee {
     public static Employee salvarEmployee(Employee employee) throws ArquivoException, EmailInvalidoException {
         File output;
         FileWriter out;
-        try {
-            output = new File(getArquivoCriado());
-            if (output.exists()) {
-                out = new FileWriter(output, true);
-                out.write(employee.toString());
-                System.out.println("salvou");
-                out.close();
-            }
-            return employee;
-        } catch (IOException fx){
-            fx.printStackTrace();
+        employeeList.add(employee);
+        if (Objects.requireNonNull(listarEmployees()).stream().anyMatch(e -> e.getEmail().equals(employee.getEmail()))) {
+            throw new EmailInvalidoException("Email ja existente no arquivo");
         }
-        return null;
-    }
-
-    public static void adicionarNoArquivoAlteracoes(List<Employee> employeeList){
-        File output;
-        FileWriter out;
         try {
             output = new File(getArquivoCriado());
             if (output.exists()) {
@@ -59,19 +54,39 @@ public class Employee {
                 });
                 out.close();
             }
-        } catch (IOException fx){
+            return employee;
+        } catch (IOException fx) {
             fx.printStackTrace();
         }
+        return null;
     }
 
     public static Employee atualizarEmployee(Employee employee) throws ArquivoException, EmailInvalidoException, EmployeeNaoEncontradoException {
+        File output;
+        FileWriter out;
         Employee employeeParaApagar = buscarEmployee(employee.getId());
-        List<Employee> novaLista = listarEmployees();
-        assert novaLista != null;
-        novaLista.removeIf(p -> p.getId().equals(employeeParaApagar.getId()));
-        novaLista.add(employee);
-        adicionarNoArquivoAlteracoes(novaLista);
-        return employee;
+        if (employeeParaApagar == null) {
+            throw new EmployeeNaoEncontradoException("Empregado não encontrado");
+        } else {
+            try {
+                output = new File(getArquivoCriado());
+                if (output.exists()) {
+                    out = new FileWriter(output);
+                    employeeList.forEach(p -> {
+                        try {
+                            out.write(p.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    out.close();
+                }
+                return employee;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public static List<Employee> listarEmployees() {
@@ -87,7 +102,7 @@ public class Employee {
 
                 String line = bfr.readLine();
 
-                while(line != null){
+                while (line != null) {
                     values = line.split(";");
                     listaDados.add(Arrays.asList(values));
                     line = bfr.readLine();
@@ -100,26 +115,50 @@ public class Employee {
                     employee.setEmail(p.get(3));
                     listaEmployee.add(employee);
                 });
-                System.out.println("salvou");
                 fr.close();
                 return listaEmployee;
             }
-        } catch (IOException fx){
+        } catch (IOException fx) {
             fx.printStackTrace();
         }
         return null;
     }
 
     public static Employee buscarEmployee(String id) throws ArquivoException, EmployeeNaoEncontradoException {
-        return Objects.requireNonNull(listarEmployees()).stream().filter(p -> p.getId().equals(id)).findFirst().orElse(null);
+        return Objects.requireNonNull(listarEmployees()).stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public static void apagarEmployee(String id) throws ArquivoException, EmployeeNaoEncontradoException {
         Employee employeeParaApagar = buscarEmployee(id);
-        List<Employee> novaLista = listarEmployees();
-        assert novaLista != null;
-        novaLista.removeIf(p -> p.getId().equals(employeeParaApagar.getId()));
-        adicionarNoArquivoAlteracoes(novaLista);
+        File output;
+        FileWriter out;
+        if (employeeParaApagar == null) {
+            throw new EmployeeNaoEncontradoException("Employee não encontrado");
+        } else {
+            List<Employee> listaNova = listarEmployees();
+            assert listaNova != null;
+            listaNova.removeIf(e -> e.getId().equals(employeeParaApagar.getId()));
+            try {
+                output = new File(getArquivoCriado());
+                if (output.exists()) {
+                    out = new FileWriter(output);
+                    Objects.requireNonNull(listaNova).forEach(p -> {
+                        try {
+                            out.write(p.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    out.close();
+                }
+            } catch (IOException fx) {
+                fx.printStackTrace();
+            }
+        }
+
     }
 
     public void setId(String id) {
@@ -164,7 +203,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        return  id +
+        return id +
                 ";" + nome +
                 ";" + sobrenome +
                 ";" + email + "\n";

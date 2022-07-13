@@ -2,6 +2,7 @@ package com.ciandt.feedfront;
 
 import com.ciandt.feedfront.employee.Employee;
 import com.ciandt.feedfront.excecoes.ArquivoException;
+import com.ciandt.feedfront.excecoes.ComprimentoInvalidoException;
 import com.ciandt.feedfront.excecoes.EmailInvalidoException;
 import com.ciandt.feedfront.excecoes.EmployeeNaoEncontradoException;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 public class App 
 {
-    public static void main( String[] args ) throws ArquivoException, EmployeeNaoEncontradoException {
+    public static void main( String[] args ) throws ArquivoException, EmployeeNaoEncontradoException, ComprimentoInvalidoException {
 
         Employee novoEmployee1 = new Employee("Joao","Santos","joaosantos@mail.com");
         Employee novoEmployee2 = new Employee("Maria","Duarte","mariaduarte@mail.com");
