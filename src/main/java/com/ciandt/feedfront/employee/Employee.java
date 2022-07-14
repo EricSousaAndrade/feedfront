@@ -8,7 +8,7 @@ import com.ciandt.feedfront.excecoes.EmployeeNaoEncontradoException;
 import java.io.*;
 import java.util.*;
 
-public class Employee {
+public class Employee implements Serializable {
     private String id;
     private String nome;
     private String sobrenome;
@@ -39,7 +39,7 @@ public class Employee {
         FileWriter out;
         employeeList.add(employee);
         if (Objects.requireNonNull(listarEmployees()).stream().anyMatch(e -> e.getEmail().equals(employee.getEmail()))) {
-            throw new EmailInvalidoException("Email ja existente no arquivo");
+            throw new EmailInvalidoException("E-mail ja cadastrado no repositorio");
         }
         try {
             output = new File(getArquivoCriado());
@@ -110,8 +110,16 @@ public class Employee {
                 listaDados.forEach(p -> {
                     Employee employee = new Employee();
                     employee.setId(p.get(0));
-                    employee.setNome(p.get(1));
-                    employee.setSobrenome(p.get(2));
+                    try {
+                        employee.setNome(p.get(1));
+                    } catch (ComprimentoInvalidoException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        employee.setSobrenome(p.get(2));
+                    } catch (ComprimentoInvalidoException e) {
+                        throw new RuntimeException(e);
+                    }
                     employee.setEmail(p.get(3));
                     listaEmployee.add(employee);
                 });
@@ -169,7 +177,10 @@ public class Employee {
         return nome;
     }
 
-    public void setNome(String nome) {
+    public void setNome(String nome) throws ComprimentoInvalidoException {
+        if (nome.length() <= 2) {
+            throw new ComprimentoInvalidoException("Comprimento do nome precisa ser maior que 2");
+        }
         this.nome = nome;
     }
 
@@ -177,7 +188,10 @@ public class Employee {
         return sobrenome;
     }
 
-    public void setSobrenome(String sobrenome) {
+    public void setSobrenome(String sobrenome) throws ComprimentoInvalidoException {
+        if (sobrenome.length() <= 2) {
+            throw new ComprimentoInvalidoException("Comprimento do sobrenome precisa ser maior que 2");
+        }
         this.sobrenome = sobrenome;
     }
 
@@ -209,4 +223,16 @@ public class Employee {
                 ";" + email + "\n";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return id.equals(employee.id) && nome.equals(employee.nome) && sobrenome.equals(employee.sobrenome) && email.equals(employee.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nome, sobrenome, email);
+    }
 }
