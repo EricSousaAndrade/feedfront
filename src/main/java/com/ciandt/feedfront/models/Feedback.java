@@ -2,6 +2,7 @@ package com.ciandt.feedfront.models;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Feedback implements Serializable {
@@ -103,5 +104,18 @@ public class Feedback implements Serializable {
 
     public void setArquivo(String arquivo) {
         this.arquivo = arquivo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Feedback feedback = (Feedback) o;
+        return Objects.equals(id, feedback.id) && Objects.equals(data, feedback.data) && Objects.equals(autor, feedback.autor) && Objects.equals(proprietario, feedback.proprietario) && Objects.equals(descricao, feedback.descricao) && Objects.equals(oqueMelhora, feedback.oqueMelhora) && Objects.equals(comoMelhora, feedback.comoMelhora) && Objects.equals(arquivo, feedback.arquivo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, data, autor, proprietario, descricao, oqueMelhora, comoMelhora, arquivo);
     }
 }
