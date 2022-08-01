@@ -28,11 +28,11 @@ public class FeedbackController {
         return service.salvar(feedback);
     }
 
-    public Feedback atualizar(Feedback feedback) throws BusinessException {
+    public Feedback atualizar(Feedback feedback) throws BusinessException, EmployeeNaoEncontradoException {
         return service.atualizar(feedback);
     }
 
-    public void apagar(Long id) throws BusinessException {
+    public void apagar(Long id) throws BusinessException, EmployeeNaoEncontradoException {
         service.apagar(id);
     }
 

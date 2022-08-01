@@ -113,8 +113,6 @@ public class Employee {
                 ", nome='" + nome + '\'' +
                 ", sobrenome='" + sobrenome + '\'' +
                 ", email='" + email + '\'' +
-                ", feedbackFeitos=" + feedbackFeitos +
-                ", feedbackRecebidos=" + feedbackRecebidos +
                 '}';
     }
 }

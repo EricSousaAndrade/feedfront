@@ -69,6 +69,7 @@ public class UIFeedback {
 
         System.out.println("Digite o ID do Employee que receberá o Feedback:");
         idProprietario = sc.nextLong();
+        sc.nextLine();
 
         try {
             proprietario = employeeController.buscar(idProprietario);

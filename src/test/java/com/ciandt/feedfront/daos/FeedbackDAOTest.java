@@ -45,8 +45,8 @@ public class FeedbackDAOTest {
         feedback = new Feedback(LocalDate.now(), autor, proprietario, "descrição");
 
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Feedback f where 1 = 1").executeUpdate();
-        entityManager.createQuery("delete from Employee e where 1 = 1").executeUpdate();
+        entityManager.createQuery("delete from FEEDBACK f where 1 = 1").executeUpdate();
+        entityManager.createQuery("delete from EMPLOYEE e where 1 = 1").executeUpdate();
 
         entityManager.persist(autor);
         entityManager.persist(proprietario);

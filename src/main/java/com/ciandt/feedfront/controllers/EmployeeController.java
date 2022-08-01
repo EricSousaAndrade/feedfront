@@ -31,7 +31,7 @@ public class EmployeeController {
         return service.salvar(employee);
     }
 
-    public void apagar(long id) throws BusinessException {
+    public void apagar(long id) throws BusinessException, EmployeeNaoEncontradoException {
         service.apagar(id);
     }
 

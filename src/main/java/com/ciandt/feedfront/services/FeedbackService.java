@@ -5,6 +5,7 @@ import com.ciandt.feedfront.contracts.Service;
 import com.ciandt.feedfront.daos.EmployeeDAO;
 import com.ciandt.feedfront.daos.FeedbackDAO;
 import com.ciandt.feedfront.excecoes.BusinessException;
+import com.ciandt.feedfront.excecoes.EntidadeNaoEncontradaException;
 import com.ciandt.feedfront.models.Employee;
 import com.ciandt.feedfront.models.Feedback;
 
@@ -25,11 +26,18 @@ public class FeedbackService implements Service<Feedback> {
 
     @Override
     public Feedback buscar(long id) throws BusinessException {
-        return dao.buscar(id).get();
+        return dao.buscar(id).orElseThrow(() -> new EntidadeNaoEncontradaException("não foi possível encontrar o feedback"));
     }
 
     @Override
     public Feedback salvar(Feedback feedback) throws BusinessException, IllegalArgumentException {
+        if(feedback == null ){
+            throw new IllegalArgumentException("feedback inválido");
+        }else if(feedback.getProprietario() == null){
+            throw new IllegalArgumentException("employee inválido");
+        }else if(feedback.getAutor() == null ){
+            throw new EntidadeNaoEncontradaException("não foi possível encontrar o employee");
+        }
         return dao.salvar(feedback);
     }
 

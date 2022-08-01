@@ -11,9 +11,10 @@ public class EmployeeDAO implements DAO<Employee> {
 
     EntityManagerFactory entityManagerFactory = Persistence
             .createEntityManagerFactory("feedfront");
-    EntityManager entityManager = entityManagerFactory.createEntityManager();
+    EntityManager entityManager;
 
     public EmployeeDAO() {
+        entityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override
@@ -34,15 +35,10 @@ public class EmployeeDAO implements DAO<Employee> {
 
     @Override
     public Employee salvar(Employee employee) {
-        try {
             entityManager.getTransaction().begin();
             entityManager.persist(employee);
             entityManager.getTransaction().commit();
             return employee;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
     }
 
     @Override

@@ -40,8 +40,8 @@ public class EmployeeDAOTest {
         employee.setFeedbackRecebidos(List.of());
 
         entityManager.getTransaction().begin();
-        entityManager.createQuery("delete from Feedback f where 1 = 1").executeUpdate();
-        entityManager.createQuery("delete from Employee e where 1 = 1").executeUpdate();
+        entityManager.createQuery("delete from FEEDBACK f where 1 = 1").executeUpdate();
+        entityManager.createQuery("delete from EMPLOYEE e where 1 = 1").executeUpdate();
         entityManager.getTransaction().commit();
 
         employeeDAO.salvar(employee);
@@ -85,14 +85,14 @@ public class EmployeeDAOTest {
 
     @Test
     public void atualizarDados() throws ComprimentoInvalidoException {
+        Optional<Employee> employeeSalvo = employeeDAO.buscar(employee.getId());
+        String nome = employeeSalvo.get().getNome();
+        String email = employeeSalvo.get().getEmail();
         employee.setNome("mario");
         employee.setEmail("m.silveira@email.com");
 
-        Optional<Employee> employeeSalvo = employeeDAO.buscar(employee.getId());
-
-        assertNotEquals(employeeSalvo.get().getNome(), employee.getNome());
-        assertNotEquals(employeeSalvo.get().getEmail(), employee.getEmail());
-
+        assertNotEquals(nome, employee.getNome());
+        assertNotEquals(email, employee.getEmail());
         Employee employeAtualizado = employeeDAO.salvar(employee);
 
         assertEquals(employeAtualizado.getNome(), employee.getNome());

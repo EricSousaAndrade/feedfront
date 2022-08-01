@@ -12,9 +12,9 @@ public interface Service<T> {
 
     T salvar(T e) throws BusinessException, IllegalArgumentException;
 
-    T atualizar(T e) throws BusinessException, IllegalArgumentException;
+    T atualizar(T e) throws BusinessException, IllegalArgumentException, EmployeeNaoEncontradoException;
 
-    void apagar(long id) throws BusinessException;
+    void apagar(long id) throws BusinessException, EmployeeNaoEncontradoException;
 
     void setDAO(DAO<T> dao);
 }

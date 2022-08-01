@@ -97,7 +97,7 @@ public class EmployeeServiceTest {
 
     @Test
     public void atualizacaoBemSucedida() {
-        employee.setEmail("joao.silveira@email.com");
+        employee.setEmail("joaonew.silveira@email.com");
 
         when(employeeDAO.salvar(employee)).thenReturn(employee);
         when(employeeDAO.buscar(employee.getId())).thenReturn(Optional.of(employee));
