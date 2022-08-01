@@ -1,24 +1,17 @@
 package com.ciandt.feedfront.contracts;
 
-import com.ciandt.feedfront.excecoes.ArquivoException;
-import com.ciandt.feedfront.excecoes.BusinessException;
-import com.ciandt.feedfront.excecoes.EmailInvalidoException;
-import com.ciandt.feedfront.excecoes.EntidadeNaoSerializavelException;
-
-import java.io.IOException;
+import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
-public interface DAO<E> {
-    boolean tipoImplementaSerializable();
+public interface DAO<T> {
+    List<T> listar();
 
-    List<E> listar() throws ArquivoException, EntidadeNaoSerializavelException;
+    Optional<T> buscar(long id);
 
-    E buscar(String id) throws ArquivoException, EntidadeNaoSerializavelException, BusinessException;
+    T salvar(T t);
 
-    E salvar(E e) throws ArquivoException, EntidadeNaoSerializavelException, BusinessException;
+    boolean apagar(long id);
 
-    boolean apagar(String id) throws ArquivoException, EntidadeNaoSerializavelException, BusinessException;
-
-    E atualizar(E e) throws ArquivoException, BusinessException, IllegalArgumentException;
-
+    void setEntityManager(EntityManager entityManager);
 }

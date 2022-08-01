@@ -2,46 +2,62 @@ package com.ciandt.feedfront.models;
 
 import com.ciandt.feedfront.excecoes.ComprimentoInvalidoException;
 
-import java.io.*;
-import java.util.UUID;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Objects;
 
-public class Employee implements Serializable {
-    private String id;
+@Entity(name = "EMPLOYEE")
+public class Employee {
+
+    @Id
+    @SequenceGenerator(name="article_gen", sequenceName="article_gen", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_gen")
+    @Column(name = "id_employee", nullable = false)
+    private Long id;
+
+    @Column(name = "nome", nullable = false)
     private String nome;
-    private String sobrenome;
-    private String email;
-    private String arquivo; //TODO: alterar de acordo com a sua implementação
-    private static final String repositorioPath = "src/main/resources/data/employee/"; //TODO: alterar de acordo com a sua implementação
 
-    private static final long serialVersionID = 1;
+    @Column(name = "sobrenome", nullable = false)
+    private String sobrenome;
+
+    @Column(name = "email")
+    private String email;
+
+    @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY)
+    private List<Feedback> feedbackFeitos;
+
+    @OneToMany(mappedBy = "proprietario", fetch = FetchType.LAZY)
+    private List<Feedback> feedbackRecebidos;
+
+    public Employee() {
+    }
 
     public Employee(String nome, String sobrenome, String email) throws ComprimentoInvalidoException {
-        this.id = UUID.randomUUID().toString();
-        this.arquivo = repositorioPath + getId() + ".byte";
-
         setNome(nome);
-        setEmail(email);
         setSobrenome(sobrenome);
+        this.email = email;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Employee employee = (Employee) obj;
-
-        return getId().equals(employee.getId());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id) && Objects.equals(nome, employee.nome) && Objects.equals(sobrenome, employee.sobrenome) && Objects.equals(email, employee.email) && Objects.equals(feedbackFeitos, employee.feedbackFeitos) && Objects.equals(feedbackRecebidos, employee.feedbackRecebidos);
     }
 
     @Override
     public int hashCode() {
-        return 31 * 7 + ((id == null) ?  0 : id.hashCode());
+        return Objects.hash(id, nome, sobrenome, email, feedbackFeitos, feedbackRecebidos);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -49,19 +65,10 @@ public class Employee implements Serializable {
     }
 
     public void setNome(String nome) throws ComprimentoInvalidoException {
-        if (nome.length() < 3) {
-            throw new ComprimentoInvalidoException("Comprimento do nome deve ser maior que 2 caracteres.");
+        if(nome.length() <=2){
+            throw new ComprimentoInvalidoException("Nome precisa ser maior que dois");
         }
-
         this.nome = nome;
-    }
-
-    public String getArquivo() {
-        return arquivo;
-    }
-
-    public void setArquivo(String arquivo) {
-        this.arquivo = arquivo;
     }
 
     public String getSobrenome() {
@@ -69,8 +76,8 @@ public class Employee implements Serializable {
     }
 
     public void setSobrenome(String sobrenome) throws ComprimentoInvalidoException {
-        if (sobrenome.length() < 3) {
-            throw new ComprimentoInvalidoException("Comprimento do sobrenome deve ser maior que 2 caracteres.");
+        if(sobrenome.length() <=2){
+            throw new ComprimentoInvalidoException("Nome precisa ser maior que dois");
         }
         this.sobrenome = sobrenome;
     }
@@ -83,8 +90,31 @@ public class Employee implements Serializable {
         this.email = email;
     }
 
-    public String getId() {
-        return id;
+    public List<Feedback> getFeedbackFeitos() {
+        return feedbackFeitos;
     }
 
+    public List<Feedback> getFeedbackRecebidos() {
+        return feedbackRecebidos;
+    }
+
+    public void setFeedbackFeitos(List<Feedback> feedbackFeitos) {
+        this.feedbackFeitos = feedbackFeitos;
+    }
+
+    public void setFeedbackRecebidos(List<Feedback> feedbackRecebidos) {
+        this.feedbackRecebidos = feedbackRecebidos;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", sobrenome='" + sobrenome + '\'' +
+                ", email='" + email + '\'' +
+                ", feedbackFeitos=" + feedbackFeitos +
+                ", feedbackRecebidos=" + feedbackRecebidos +
+                '}';
+    }
 }

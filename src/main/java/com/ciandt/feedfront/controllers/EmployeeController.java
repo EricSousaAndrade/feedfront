@@ -1,13 +1,11 @@
-package com.ciandt.feedfront.controller;
+package com.ciandt.feedfront.controllers;
 
 import com.ciandt.feedfront.contracts.Service;
 import com.ciandt.feedfront.excecoes.EmployeeNaoEncontradoException;
 import com.ciandt.feedfront.models.Employee;
-import com.ciandt.feedfront.excecoes.ArquivoException;
 import com.ciandt.feedfront.excecoes.BusinessException;
 import com.ciandt.feedfront.services.EmployeeService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeController {
@@ -17,23 +15,23 @@ public class EmployeeController {
         this.service = new EmployeeService();
     }
 
-    public List<Employee> listar() throws ArquivoException {
-        return service.listar();
+    public List<Employee> listar() {
+    return service.listar();
     }
 
-    public Employee buscar(Long id) throws BusinessException, ArquivoException, EmployeeNaoEncontradoException {
+    public Employee buscar(long id) throws BusinessException, EmployeeNaoEncontradoException {
         return service.buscar(id);
     }
 
-    public Employee salvar(Employee employee) throws BusinessException, ArquivoException {
+    public Employee salvar(Employee employee) throws BusinessException {
         return service.salvar(employee);
     }
 
-    public Employee atualizar(Employee employee) throws BusinessException, ArquivoException {
-        return service.atualizar(employee);
+    public Employee atualizar(Employee employee) throws BusinessException {
+        return service.salvar(employee);
     }
 
-    public void apagar(Long id) throws BusinessException, ArquivoException {
+    public void apagar(long id) throws BusinessException {
         service.apagar(id);
     }
 
